@@ -1,0 +1,117 @@
+Instalar React (Se va a usar, no solo dependencia de desarrollo)
+  npm install react react-dom -S
+
+Inicializar npm
+  npm init -y
+
+Crear carpeta src/components/App.jsx
+.jsx es javascript con html
+los componentes se escriben con mayúsculas
+
+En index se importa react
+  import React from 'react'
+  import ReactDom from 'react-dom'
+  import App from './componentes/App'
+
+Se hace el render de la app en index.js
+  ReactDom.render(<App/>, document.getElementById('app'));
+
+crear carpeta y archivo public/index.html
+
+en App.jsx se inicializa react y se crea un componente
+  const App = () => <h1>Hello React!</h1>;
+  export default App;
+
+Agregar webpack
+  Instalar babel
+    npm install @babel/core @babel/preset-env @babel/preset-react babel-loader -D
+
+  configurar babel
+    crear .babelrc
+      {
+        "presets": [
+          "@babel/preset-env",
+          [
+            "@babel/preset-react",
+            {
+              "runtime": "automatic"
+            }
+          ]
+        ]
+      }
+
+  Instalar webpack
+    npm install webpack webpack-cli webpack-dev-server -D
+  
+  en webpack.config se hace la configuración inicial
+    const Path = require("path");
+    /**@type {import('webpack').Configuration} */ para ayudas al escribir
+
+    module.exports = {
+      entry: "./src/index.js",
+      output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "bundle.js",
+      },
+      resolve: {
+        extensions: [".js", ".jsx"],
+      },
+      module: {
+        rules: [
+          {
+            test: /\.(js|jsx)$/,
+            exclude: /node_modules/,
+            use: {
+              loader: "babel-loader",
+            },
+          },
+        ],
+      },
+      devServer:{
+        static: {
+          directory: path.join(__dirname, "dist"),
+          watch: true,
+        },
+        watchFiles: path.join(__dirname, "./**"),
+        compress: true,
+        historyApiFallback: true,
+        port: 3006,
+        open: true,
+      }
+    };
+
+  Instalar loader y plugin para trabajar con html
+    npm instal html-loader html-webpack-plugin -D
+
+  Agregar Css y se va a trabajar con sass por eso las ultimas instalaciones
+    npm install mini-css-extract-plugin css-loader style-loader sass sass-loader -D
+  Configurar el webpack.config
+    const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+    En modules
+      {
+        test: /\.(c|sc|sa)ss$/,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      }
+    en plugins
+      new MiniCssExtractPlugin({
+        filename: "[name].css",
+      }),
+  
+  instalar paquetes adicionales
+    npm install css-minimizer-webpack-plugin terser-webpack-plugin clean-webpack-plugin -D
+  Configuración de webpack.config
+    const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+    const TerserPlugin = require("terser-webpack-plugin");
+    const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+  
+  Agregar la configuración de optimización
+    optimization:{
+      minimize:true,
+      minimizer:[
+        new CssMinimizerPlugin(),
+        new TerserPlugin(),
+      ]
+    }
+
+    Deploy proyecto en netlify
+    
